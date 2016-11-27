@@ -24,6 +24,9 @@ def cmd():
       print "mouse"
     elif(data["cmd"] == "keys"):
       keystrokes.typer(data["keys"])
+    elif(data["cmd"] == "scroll"):
+      a = win32api.GetCursorPos()
+      win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL, a[0], a[1], 10*int(data["y"]), 0)
     elif(data["cmd"] == "click"):
       if(data["keys"] == 1):
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,0,0)
@@ -31,9 +34,6 @@ def cmd():
       elif(data["keys"] == 2):
         win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTDOWN,0,0)
         win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTUP,0,0)
-        
-    #a = request.args.get('a', 0, type=int)
-    #b = request.args.get('b', 0, type=int)
     return jsonify({"ok":1})
   else:
     return "JSON RPC Only..."
