@@ -1,7 +1,6 @@
 package com.thingdone.bill.bexley;
 
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -23,7 +21,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -31,7 +28,6 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
@@ -48,7 +44,54 @@ public class MainActivity extends AppCompatActivity {
     private float mDownY;
     private final float SCROLL_THRESHOLD = 10;
     private boolean isOnClick;
+    private boolean isScroll;
     private TextView myTextView;
+    //FIXME the url is hardcoded -- need to add a dialog prompt or autodetection
+    //Debug url
+    //private final String TARGET_URL = "http://192.168.150.114:5000/cmd";
+    private final String TARGET_URL = "http://192.168.150.111:5000/cmd";
+    private long clickStartMs = 0; //this stores last time a click started
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Button buttonTVOff = (Button) findViewById(R.id.buttonTVOff);
+        Button buttonLeft = (Button) findViewById(R.id.buttonLeft);
+        Button buttonRight = (Button) findViewById(R.id.buttonRight);
+        myTextView = (TextView)findViewById(R.id.textView);
+        //FIXME -- we should be only allowing other threads to make the network connections...
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        //FIXME - the keyboard is always visible from this -- not sure if it's a good way
+        //FIXME - the keyboard is only visible when in vertical orientation. I consider it a feature right now, but I have no idea why that happens
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        buttonTVOff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TVOff();
+            }
+        });
+
+        buttonLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mouseClick(1);
+            }
+        });
+
+        buttonRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mouseClick(2);
+            }
+        });
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
@@ -57,14 +100,21 @@ public class MainActivity extends AppCompatActivity {
             case MotionEvent.ACTION_DOWN:
                 mDownX = ev.getX();
                 mDownY = ev.getY();
+                clickStartMs = System.currentTimeMillis();
                 Log.i(LOG_TAG, "Down ");
                 isOnClick = true;
                 break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                isScroll = true; //Force it into scrolling mode
+                break;
+            case MotionEvent.ACTION_POINTER_UP:
+                isScroll = false; //exiting scrolling..
+                break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
-                if (isOnClick) {
-                    Log.i(LOG_TAG, "onClick ");
-                    //TODO onClick code
+                Log.i(LOG_TAG, "onClick ");
+                if((System.currentTimeMillis() - clickStartMs) <  100){
+                    mouseClick(1);
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -77,10 +127,20 @@ public class MainActivity extends AppCompatActivity {
                     float newy = ev.getY();
                     deltax = ((mDownX - newx));
                     deltay = ((mDownY - newy));
-                    mDownX = newx;
-                    mDownY = newy;
-                    mouseMove(deltax, deltay);
-                    Log.i(LOG_TAG, "Delta " + deltax + " " + deltay);
+                    if(isScroll) {
+                        if(Math.abs(deltay) >= 1) {
+                            mouseScroll(deltax, deltay);
+                            mDownX = newx;
+                            mDownY = newy;
+                            Log.i(LOG_TAG, "Scroll " + deltax + " " + deltay);
+                        }
+                    }else{
+                        mouseMove(deltax, deltay);
+                        mDownX = newx;
+                        mDownY = newy;
+                        Log.i(LOG_TAG, "Move " + deltax + " " + deltay);
+                    }
+
                 }
                 break;
             default:
@@ -139,13 +199,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String command(JSONObject payload) throws IOException, JSONException{
-        return downloadUrl("http://192.168.150.111:5000/cmd", payload);
+        return downloadUrl(TARGET_URL, payload);
     }
 
     private void mouseMove(float x, float y){
         try {
             JSONObject jsonParam = new JSONObject();
             jsonParam.put("cmd", "mouse");
+            jsonParam.put("x", x);
+            jsonParam.put("y", y);
+            command(jsonParam);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void mouseScroll(float x, float y){
+        try {
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put("cmd", "scroll");
             jsonParam.put("x", x);
             jsonParam.put("y", y);
             command(jsonParam);
@@ -170,6 +244,30 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void TVOff(){
+        byte data[] = new  byte[1024];
+        long start, end;
+        // TODO Auto-generated method stub
+        Log.d(LOG_TAG, "Button Clicked");
+        myTextView.setText("Checking...");
+        try {
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put("cmd", "test");
+            jsonParam.put("description", "Real");
+            jsonParam.put("enable", "true2");
+            start = System.currentTimeMillis();
+            command(jsonParam);
+            end = System.currentTimeMillis();
+            myTextView.setText("Server Online "+(end-start) + "ms");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            myTextView.setText("Server Offline");
+            e.printStackTrace();
+        }
+        Log.d("BEXLEY", "Done");
+    }
+
     private void mouseClick(int keys){
         try {
             JSONObject jsonParam = new JSONObject();
@@ -182,64 +280,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Button buttonTVOff = (Button) findViewById(R.id.buttonTVOff);
-        Button buttonLeft = (Button) findViewById(R.id.buttonLeft);
-        Button buttonRight = (Button) findViewById(R.id.buttonRight);
-        myTextView = (TextView)findViewById(R.id.textView);
-        StrictMode.ThreadPolicy policy = new StrictMode.
-                ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        buttonTVOff.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                byte data[] = new  byte[1024];
-                long start, end;
-                // TODO Auto-generated method stub
-                Log.d(LOG_TAG, "Button Clicked");
-                myTextView.setText("Checking...");
-                try {
-                    JSONObject jsonParam = new JSONObject();
-                    jsonParam.put("cmd", "test");
-                    jsonParam.put("description", "Real");
-                    jsonParam.put("enable", "true2");
-                    start = System.currentTimeMillis();
-                    command(jsonParam);
-                    end = System.currentTimeMillis();
-                    myTextView.setText("Server Online "+(end-start) + "ms");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    myTextView.setText("Server Offline");
-                    e.printStackTrace();
-                }
-                Log.d("BEXLEY", "Done");
-            }
-        });
-
-        buttonLeft.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mouseClick(1);
-            }
-        });
-
-        buttonRight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mouseClick(2);
-            }
-        });
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     /**
@@ -281,25 +321,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         char mykey = (char)event.getUnicodeChar(event.getMetaState());
-        //String tmp = mykey;
         Log.i(LOG_TAG, "key detected " + keyCode + " " + (char)event.getUnicodeChar(event.getMetaState()));
         keyPress(String.valueOf(mykey));
-        //event.isShiftPressed()
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_D:
-
-                return true;
-            case KeyEvent.KEYCODE_F:
-
-                return true;
-            case KeyEvent.KEYCODE_J:
-
-                return true;
-            case KeyEvent.KEYCODE_K:
-
-                return true;
-            default:
-                return super.onKeyUp(keyCode, event);
-        }
+        return super.onKeyUp(keyCode, event);
     }
 }
