@@ -35,16 +35,7 @@
         android:id="@+id/buttonRight"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/buttonTVOff" />
-
-    <Button
-        android:text="TVOff"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/buttonTVOff"
-        android:onClick="TVOffClick"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_toEndOf="@+id/buttonPCOff" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -53,6 +44,24 @@
         android:id="@+id/textView"
         android:layout_marginTop="26dp"
         android:layout_below="@+id/buttonLeft"
-        android:layout_toStartOf="@+id/buttonTVOff" />
+        android:layout_toStartOf="@+id/buttonPCOff" />
+
+    <Button
+        android:text="TVOff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonTVOff"
+        android:onClick="TVOffClick"
+        android:layout_alignBottom="@+id/textView"
+        android:layout_toEndOf="@+id/buttonLeft" />
+
+    <Button
+        android:text="PCOff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonPCOff"
+        android:onClick="PCOffClick"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

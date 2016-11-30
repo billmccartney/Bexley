@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     //Debug url
     //private final String TARGET_URL = "http://192.168.150.114:5000/cmd";
     private final String TARGET_URL = "http://192.168.150.111:5000/cmd";
+    private final String IR_URL = "http://192.168.150.117/remote/NEC/50153655/32/";
     private long clickStartMs = 0; //this stores last time a click started
 
     @Override
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Button buttonTVOff = (Button) findViewById(R.id.buttonTVOff);
+        Button buttonPCOff = (Button) findViewById(R.id.buttonPCOff);
         Button buttonLeft = (Button) findViewById(R.id.buttonLeft);
         Button buttonRight = (Button) findViewById(R.id.buttonRight);
         myTextView = (TextView)findViewById(R.id.textView);
@@ -66,6 +68,13 @@ public class MainActivity extends AppCompatActivity {
         //FIXME - the keyboard is always visible from this -- not sure if it's a good way
         //FIXME - the keyboard is only visible when in vertical orientation. I consider it a feature right now, but I have no idea why that happens
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        buttonPCOff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PCOff();
+            }
+        });
+
         buttonTVOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -245,6 +254,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void TVOff(){
+        byte data[] = new  byte[1024];
+        long start, end;
+        // TODO Auto-generated method stub
+        Log.d(LOG_TAG, "Button Clicked");
+        myTextView.setText("Checking...");
+        try {
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put("cmd", "test");
+            jsonParam.put("description", "Real");
+            jsonParam.put("enable", "true2");
+            start = System.currentTimeMillis();
+            downloadUrl(IR_URL, jsonParam);
+            //command(jsonParam);
+            end = System.currentTimeMillis();
+            myTextView.setText("Server Online "+(end-start) + "ms");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            myTextView.setText("Server Offline");
+            e.printStackTrace();
+        }
+        Log.d("BEXLEY", "Done");
+    }
+
+    private void PCOff(){
         byte data[] = new  byte[1024];
         long start, end;
         // TODO Auto-generated method stub
