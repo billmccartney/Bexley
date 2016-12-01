@@ -50,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
     //Debug url
     //private final String TARGET_URL = "http://192.168.150.114:5000/cmd";
     private final String TARGET_URL = "http://192.168.150.111:5000/cmd";
-    private final String IR_URL = "http://192.168.150.117/remote/NEC/50153655/32/";
+    private final String IR_URL = "http://192.168.150.117/remote/NEC/";
+    //50153655/32/";
     private long clickStartMs = 0; //this stores last time a click started
 
     @Override
@@ -58,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Button buttonTVOff = (Button) findViewById(R.id.buttonTVOff);
+        Button buttonVolumeDown = (Button) findViewById(R.id.buttonVolumeDown);
+        Button buttonVolumeUp = (Button) findViewById(R.id.buttonVolumeUp);
         Button buttonPCOff = (Button) findViewById(R.id.buttonPCOff);
         Button buttonLeft = (Button) findViewById(R.id.buttonLeft);
         Button buttonRight = (Button) findViewById(R.id.buttonRight);
@@ -78,7 +81,21 @@ public class MainActivity extends AppCompatActivity {
         buttonTVOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TVOff();
+                writeIR(50153655, 32);
+            }
+        });
+
+        buttonVolumeDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                writeIR(50165895, 32);
+            }
+        });
+
+        buttonVolumeUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                writeIR(50157735, 32);
             }
         });
 
@@ -211,6 +228,10 @@ public class MainActivity extends AppCompatActivity {
         return downloadUrl(TARGET_URL, payload);
     }
 
+    private String commandIR(JSONObject payload) throws IOException, JSONException{
+        return downloadUrl(IR_URL, payload);
+    }
+
     private void mouseMove(float x, float y){
         try {
             JSONObject jsonParam = new JSONObject();
@@ -253,19 +274,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void TVOff(){
+    private void TVOff() {
+
+    }
+
+    private void writeIR(int code, int bitcount){
         byte data[] = new  byte[1024];
         long start, end;
         // TODO Auto-generated method stub
-        Log.d(LOG_TAG, "Button Clicked");
+        //Log.d(LOG_TAG, "Button Clicked");
         myTextView.setText("Checking...");
         try {
             JSONObject jsonParam = new JSONObject();
-            jsonParam.put("cmd", "test");
-            jsonParam.put("description", "Real");
-            jsonParam.put("enable", "true2");
             start = System.currentTimeMillis();
-            downloadUrl(IR_URL, jsonParam);
+            downloadUrl(IR_URL + code+"/"+bitcount+"/", jsonParam);
             //command(jsonParam);
             end = System.currentTimeMillis();
             myTextView.setText("Server Online "+(end-start) + "ms");
@@ -275,7 +297,7 @@ public class MainActivity extends AppCompatActivity {
             myTextView.setText("Server Offline");
             e.printStackTrace();
         }
-        Log.d("BEXLEY", "Done");
+        //Log.d("BEXLEY", "Done");
     }
 
     private void PCOff(){
