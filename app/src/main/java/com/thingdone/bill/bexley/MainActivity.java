@@ -118,6 +118,27 @@ public class MainActivity extends AppCompatActivity {
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int action = event.getAction();
+        int keyCode = event.getKeyCode();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    //TODO
+                    writeIR(50157735, 32);
+                }
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    //TODO
+                    writeIR(50165895, 32);
+                }
+                return true;
+            default:
+                return super.dispatchKeyEvent(event);
+        }
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {

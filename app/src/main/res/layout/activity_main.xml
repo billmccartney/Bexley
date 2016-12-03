@@ -46,34 +46,6 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
-    <Button
-        android:text="Volume Down"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/buttonVolumeDown"
-        android:layout_alignBaseline="@+id/buttonTVOff"
-        android:layout_alignBottom="@+id/buttonTVOff"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/buttonTVOff" />
-
-    <Button
-        android:text="Volume Up"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/buttonVolumeUp"
-        android:layout_below="@+id/buttonLeft"
-        android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/buttonPCOff" />
-
-    <Button
-        android:text="TVOff"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/buttonTVOff"
-        android:onClick="TVOffClick"
-        android:layout_alignBottom="@+id/buttonVolumeUp"
-        android:layout_toEndOf="@+id/buttonVolumeUp" />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -82,5 +54,32 @@
         android:layout_below="@+id/buttonTVOff"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp" />
+
+    <Button
+        android:text="TVOff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonTVOff"
+        android:onClick="TVOffClick"
+        android:layout_below="@+id/buttonLeft"
+        android:layout_toEndOf="@+id/buttonLeft" />
+
+    <Button
+        android:text="Volume Down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonVolumeDown"
+        android:layout_below="@+id/buttonLeft"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/buttonPCOff" />
+
+    <Button
+        android:text="Volume Up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonVolumeUp"
+        android:layout_above="@+id/textView"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/buttonPCOff" />
 
 </RelativeLayout>
