@@ -3,6 +3,7 @@ import win32api
 import win32con
 import keystrokes
 import time
+import webbrowser
 
 #time.sleep(2)
 #keystrokes.typer("T")
@@ -34,6 +35,8 @@ def cmd():
       elif(data["keys"] == 2):
         win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTDOWN,0,0)
         win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTUP,0,0)
+    elif(data["cmd"] == "url"):
+        webbrowser.open(data["url"])
     return jsonify({"ok":1})
   else:
     return "JSON RPC Only..."

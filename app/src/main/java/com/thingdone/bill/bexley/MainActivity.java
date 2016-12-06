@@ -1,5 +1,6 @@
 package com.thingdone.bill.bexley;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
@@ -113,6 +114,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //Here we implement the url handling
+        // Get intent, action and MIME type
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if ("text/plain".equals(type)) {
+                //FIXME
+                // Handle text being sent
+                String text = intent.getStringExtra(Intent.EXTRA_TEXT);
+                sendUrl(text);
+            } else {
+                // Handle other intents, such as being started from the home screen
+            }
+        }
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -286,6 +303,20 @@ public class MainActivity extends AppCompatActivity {
             JSONObject jsonParam = new JSONObject();
             jsonParam.put("cmd", "keys");
             jsonParam.put("keys", keys);
+            //jsonParam.put("y", y);
+            command(jsonParam);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendUrl(String url){
+        try {
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put("cmd", "url");
+            jsonParam.put("url", url);
             //jsonParam.put("y", y);
             command(jsonParam);
         } catch (JSONException e) {
