@@ -31,6 +31,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import com.thingdone.bill.bexley.MagicPacket;
+
 public class MainActivity extends AppCompatActivity {
 
 
@@ -374,6 +376,15 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         Log.d("BEXLEY", "Done");
+
+        //FIXME -- this is hardcoded for my network setup
+        MagicPacket t = new MagicPacket();
+        try {
+            MagicPacket.send("bc:ee:7b:8a:ff:09", "192.168.150.255");
+        }catch (IOException e){
+            myTextView.setText("Wake up failed!");
+            e.printStackTrace();
+        }
     }
 
     private void mouseClick(int keys){
