@@ -31,8 +31,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import com.thingdone.bill.bexley.MagicPacket;
-
 public class MainActivity extends AppCompatActivity {
 
 
