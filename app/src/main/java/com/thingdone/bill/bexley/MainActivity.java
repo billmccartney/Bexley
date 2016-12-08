@@ -1,8 +1,10 @@
 package com.thingdone.bill.bexley;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -50,14 +52,18 @@ public class MainActivity extends AppCompatActivity {
     //FIXME the url is hardcoded -- need to add a dialog prompt or autodetection
     //Debug url
     //private final String TARGET_URL = "http://192.168.150.114:5000/cmd";
-    private final String TARGET_URL = "http://192.168.150.111:5000/cmd";
-    private final String IR_URL = "http://192.168.150.117/remote/NEC/";
+    private String TARGET_URL = "http://192.168.150.111:5000/cmd";
+    private String IR_URL = "http://192.168.150.117/remote/NEC/";
     //50153655/32/";
     private long clickStartMs = 0; //this stores last time a click started
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Load Preferences
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        TARGET_URL = "http://"+sharedPref.getString("pc_address", "") + ":5000/cmd";
+        IR_URL = "http:/"+sharedPref.getString("ir_address", "") + "/remote/NEC/";
         setContentView(R.layout.activity_main);
         Button buttonTVOff = (Button) findViewById(R.id.buttonTVOff);
         Button buttonVolumeDown = (Button) findViewById(R.id.buttonVolumeDown);
@@ -65,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         Button buttonPCOff = (Button) findViewById(R.id.buttonPCOff);
         Button buttonLeft = (Button) findViewById(R.id.buttonLeft);
         Button buttonRight = (Button) findViewById(R.id.buttonRight);
+        Button buttonSettings = (Button) findViewById(R.id.buttonSettings);
         myTextView = (TextView)findViewById(R.id.textView);
         //FIXME -- we should be only allowing other threads to make the network connections...
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -111,6 +118,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mouseClick(2);
+            }
+        });
+        final Intent intentSettings = new Intent(this, SettingsActivity.class);
+        buttonSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //EditText editText = (EditText) findViewById(R.id.edit_message);
+                //String message = editText.getText().toString();
+                //intent.putExtra(EXTRA_MESSAGE, message);
+                startActivity(intentSettings);
             }
         });
 

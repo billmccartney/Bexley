@@ -37,15 +37,6 @@
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@+id/buttonPCOff" />
 
-    <Button
-        android:text="PCOff"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/buttonPCOff"
-        android:onClick="PCOffClick"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -56,13 +47,15 @@
         android:layout_marginTop="16dp" />
 
     <Button
-        android:text="TVOff"
+        android:text="TV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/buttonTVOff"
         android:onClick="TVOffClick"
         android:layout_below="@+id/buttonLeft"
-        android:layout_toEndOf="@+id/buttonLeft" />
+        android:layout_toEndOf="@+id/buttonLeft"
+        android:drawableLeft="@android:drawable/ic_lock_power_off"
+        android:layout_alignBottom="@+id/buttonVolumeDown" />
 
     <Button
         android:text="Volume Down"
@@ -81,5 +74,25 @@
         android:layout_above="@+id/textView"
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@+id/buttonPCOff" />
+
+    <Button
+        android:text="Settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonVolumeUp"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/buttonSettings"
+        style="@android:style/Widget.Button"
+        android:onClick="ClickSettings" />
+
+    <Button
+        android:text="PC"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonPCOff"
+        android:onClick="PCOffClick"
+        tools:drawableLeft="@android:drawable/ic_lock_power_off"
+        android:layout_above="@+id/buttonTVOff"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
