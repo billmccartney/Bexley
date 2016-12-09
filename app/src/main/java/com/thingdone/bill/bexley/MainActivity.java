@@ -12,8 +12,10 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.appindexing.Action;
@@ -56,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private String IR_URL = "http://192.168.150.117/remote/NEC/";
     //50153655/32/";
     private long clickStartMs = 0; //this stores last time a click started
-
+    private boolean spinnerInit = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         Button buttonLeft = (Button) findViewById(R.id.buttonLeft);
         Button buttonRight = (Button) findViewById(R.id.buttonRight);
         Button buttonSettings = (Button) findViewById(R.id.buttonSettings);
+        final Spinner ExtraButtons = (Spinner)findViewById(R.id.spinnerButton);
         if(sharedPref.getBoolean("hide_volume",false)){
             buttonVolumeDown.setVisibility(View.INVISIBLE);
             buttonVolumeUp.setVisibility(View.INVISIBLE);
@@ -80,6 +83,24 @@ public class MainActivity extends AppCompatActivity {
         //FIXME -- we should be only allowing other threads to make the network connections...
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+        ExtraButtons.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                // Your code here
+                if(spinnerInit) {
+                    if(!ExtraButtons.getSelectedItem().toString().equals("Browser Commands")) {
+                        Log.i(LOG_TAG, "Down " + ExtraButtons.getSelectedItem().toString());
+                        ExtraButtons.setSelection(0);
+                    }
+
+                }
+                spinnerInit = true;
+
+            }
+
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                return;
+            }
+        });
         //FIXME - the keyboard is always visible from this -- not sure if it's a good way
         //FIXME - the keyboard is only visible when in vertical orientation. I consider it a feature right now, but I have no idea why that happens
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);

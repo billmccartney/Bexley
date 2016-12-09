@@ -27,6 +27,16 @@
         <item>-1</item>
     </string-array>
 
+    <string-array name="ExtraButtons">
+        <item>Browser Commands</item>
+        <item>Escape</item>
+        <item>Back</item>
+        <item>Next</item>
+        <item>Close Tab</item>
+        <item>New Tab</item>
+        <item>UnClose Tab</item>
+    </string-array>
+
     <!-- Example settings for Data & Sync
     <string name="pref_header_data_sync">Data &amp; sync</string>
 
