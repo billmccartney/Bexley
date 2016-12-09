@@ -72,6 +72,10 @@ public class MainActivity extends AppCompatActivity {
         Button buttonLeft = (Button) findViewById(R.id.buttonLeft);
         Button buttonRight = (Button) findViewById(R.id.buttonRight);
         Button buttonSettings = (Button) findViewById(R.id.buttonSettings);
+        if(sharedPref.getBoolean("hide_volume",false)){
+            buttonVolumeDown.setVisibility(View.INVISIBLE);
+            buttonVolumeUp.setVisibility(View.INVISIBLE);
+        }
         myTextView = (TextView)findViewById(R.id.textView);
         //FIXME -- we should be only allowing other threads to make the network connections...
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
