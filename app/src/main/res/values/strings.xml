@@ -31,7 +31,9 @@
         <item>Browser Commands</item>
         <item>Escape</item>
         <item>Back</item>
-        <item>Next</item>
+        <item>Forward</item>
+        <item>Refresh</item>
+        <item>Next Tab</item>
         <item>Close Tab</item>
         <item>New Tab</item>
         <item>UnClose Tab</item>

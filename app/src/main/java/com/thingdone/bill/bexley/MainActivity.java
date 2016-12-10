@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 // Your code here
                 if(spinnerInit) {
                     if(!ExtraButtons.getSelectedItem().toString().equals("Browser Commands")) {
+                        browserCommand(ExtraButtons.getSelectedItem().toString());
                         Log.i(LOG_TAG, "Down " + ExtraButtons.getSelectedItem().toString());
                         ExtraButtons.setSelection(0);
                     }
@@ -432,6 +433,20 @@ public class MainActivity extends AppCompatActivity {
             JSONObject jsonParam = new JSONObject();
             jsonParam.put("cmd", "click");
             jsonParam.put("keys", keys);
+            //jsonParam.put("y", y);
+            command(jsonParam);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void browserCommand(String command){
+        JSONObject jsonParam = new JSONObject();
+        try {
+            jsonParam.put("cmd", "browser");
+            jsonParam.put("command", command);
             //jsonParam.put("y", y);
             command(jsonParam);
         } catch (JSONException e) {

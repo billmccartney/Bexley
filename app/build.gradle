@@ -7,8 +7,8 @@ android {
         applicationId "com.thingdone.bill.bexley"
         minSdkVersion 21
         targetSdkVersion 24
-        versionCode 10
-        versionName "1.10"
+        versionCode 11
+        versionName "1.11"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

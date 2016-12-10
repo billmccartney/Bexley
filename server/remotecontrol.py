@@ -37,6 +37,26 @@ def cmd():
         win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTUP,0,0)
     elif(data["cmd"] == "url"):
         webbrowser.open(data["url"])
+    elif(data["cmd"] == "browser"):
+      command = data["command"]
+      if(command == "Escape"):
+        keystrokes.press("esc")
+      elif(command == "Back"):
+        keystrokes.press("browser_back")
+      elif(command == "Forward"):
+        keystrokes.press("browser_forward")
+      elif(command == "Refresh"):
+        keystrokes.press("browser_refresh")
+      elif(command == "Close Tab"):
+        keystrokes.pressHoldRelease("ctrl","w")
+      elif(command == "UnClose Tab"):
+        keystrokes.pressHoldRelease("ctrl","shift","t")
+      elif(command == "New Tab"):
+        keystrokes.pressHoldRelease("ctrl","t")
+      elif(command == "Next Tab"):
+        keystrokes.pressHoldRelease("ctrl","tab")
+      else:
+        print "writing ",command
     return jsonify({"ok":1})
   else:
     return "JSON RPC Only..."
