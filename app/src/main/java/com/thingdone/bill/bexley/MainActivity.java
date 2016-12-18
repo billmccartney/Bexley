@@ -1,5 +1,6 @@
 package com.thingdone.bill.bexley;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -157,8 +158,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //Here we implement the url handling
-        // Get intent, action and MIME type
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
@@ -169,13 +168,38 @@ public class MainActivity extends AppCompatActivity {
                 // Handle text being sent
                 String text = intent.getStringExtra(Intent.EXTRA_TEXT);
                 sendUrl(text);
+                this.moveTaskToBack(true);
             } else {
                 // Handle other intents, such as being started from the home screen
             }
         }
+
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent){
+        //Here we implement the url handling
+        // Get intent, action and MIME type
+        //Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if ("text/plain".equals(type)) {
+                //FIXME
+                // Handle text being sent
+                String text = intent.getStringExtra(Intent.EXTRA_TEXT);
+                sendUrl(text);
+                this.moveTaskToBack(true);
+
+
+            } else {
+                // Handle other intents, such as being started from the home screen
+            }
+        }
     }
 
     @Override
