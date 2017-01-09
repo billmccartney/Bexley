@@ -4,6 +4,18 @@ import win32con
 import keystrokes
 import time
 import webbrowser
+import threading
+import atexit
+import os
+
+#dummy thread instance for simple exit
+backgroundThread = threading.Thread()
+
+def myexit():
+  global backgroundThread
+  backgroundThread.cancel()
+
+atexit.register(myexit)
 
 #time.sleep(2)
 #keystrokes.typer("T")
@@ -61,6 +73,14 @@ def cmd():
   else:
     return "JSON RPC Only..."
 
+@app.route("/shutdown", methods=['GET', 'POST'])
+def shutdown():
+  if request.method == 'POST':
+    def internalshutdown():
+      os.system("shutdown.exe /h")
+    t = threading.Timer(2.0, internalshutdown) #it waits 2 seconds -- hopefully the response is already sent!
+    t.start()
+    return jsonify({"ok":1})
 if __name__ == "__main__":
     app.run(host= '0.0.0.0')
 
