@@ -75,12 +75,13 @@ def cmd():
 
 @app.route("/shutdown", methods=['GET', 'POST'])
 def shutdown():
-  if request.method == 'POST':
-    def internalshutdown():
-      os.system("shutdown.exe /h")
-    t = threading.Timer(2.0, internalshutdown) #it waits 2 seconds -- hopefully the response is already sent!
-    t.start()
-    return jsonify({"ok":1})
+  global backgroundThread
+  #FIXME - this can occur even when a get is used (FIX Amazon Echo Bridge Configuration.html first)
+  def internalshutdown():
+    os.system("shutdown.exe /h")
+  t = threading.Timer(2.0, internalshutdown) #it waits 2 seconds -- hopefully the response is already sent!
+  t.start()
+  return jsonify({"ok":1})
 if __name__ == "__main__":
     app.run(host= '0.0.0.0')
 
